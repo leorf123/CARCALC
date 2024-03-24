@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Google Map</title>
+    <style>
+
+        /* Set height and width for the map */
+        #map-container {
+          height: 500px;
+          width: 100%;
+          overflow: hidden; /* Hide overflow to remove white space */
+          padding: 0;
+          margin: 0;
+
+        }
+  
+        /* Set height for the map itself */
+        #map {
+          height: 100%;
+          width: 100%;
+        }
+      </style>
+    </head>
+    <body>
+      <div id="map-container">
+        <div id="map"></div>
+      </div>
+      <div id="locationInfo"></div>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="locationInfo"></div>
+    <script>
+        
+      let map;
+      let marker;
+
+      function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: -34.397, lng: 150.644 },
+          zoom: 8,
+        });
+
+        // Create a marker with initial position
+        marker = new google.maps.Marker({
+          position: { lat: -34.397, lng: 150.644 },
+          map: map,
+          title: "Drag me!",
+          draggable: false, // Make the marker not draggable initially
+        });
+
+        // Add event listener for when user clicks on the map
+        map.addListener("click", function(event) {
+          moveMarker(event.latLng); // Move the marker to the clicked location
+        });
+
+        // Display initial location info
+        updateLocationInfo(-34.397, 150.644); // Initial position
+      }
+
+      // Function to move the marker to a new location
+      function moveMarker(location) {
+        marker.setPosition(location); // Set marker position to the clicked location
+        updateLocationInfo(location.lat(), location.lng()); // Update location info on the page
+      }
+
+      // Function to update location info on the page
+      function updateLocationInfo(lat, lng) {
+        document.getElementById("locationInfo").innerHTML = `Latitude: ${lat}, Longitude: ${lng}`;
+
+        // Send latitude and longitude values back to Streamlit
+        parent.postMessage({ latitude: lat, longitude: lng }, "*");
+      }
+    </script>
+    <script
+      async
+      defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqcohsL-ogzZf4swaLp7zsKinv9TruF3c&callback=initMap"
+    ></script>
+  </body>
+</html>
